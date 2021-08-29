@@ -9,7 +9,7 @@ import Footer from "./footer";
 const useStyles = makeStyles((theme) => ({
 
     loader:{
-marginTop:'8rem'
+margin:'8rem auto'
     },
     container: {
         width:'100%',

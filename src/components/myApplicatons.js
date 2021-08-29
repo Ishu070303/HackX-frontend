@@ -3,8 +3,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import ApplicationCard from './ApplicationCard';
 import axios from 'axios';
 import Navbar from './navbar';
+import Loader from "react-loader-spinner";
 
 const useStyles = makeStyles((theme) => ({
+  loaderDIV:{
+width:'100%'
+  },
+  loader:{
+    margin:'8rem auto'
+        },
 myApp:{
     width:'100%',
     textAlign:'center',
@@ -35,6 +42,7 @@ app:{
 const MyApplication = () => {
     const [data, setData] =useState([])
     const classes = useStyles();
+    const [loader, setLoader]=useState(true)
     useEffect(() => {
         const fetchData = async () => {
       
@@ -49,18 +57,20 @@ const MyApplication = () => {
 
               let l =[];
 
-              data.AllApplication?.forEach(({jobName,clientName,status, date,location}) => {
+              data.AllApplication?.forEach(({jobName,clientName,status, date,location, jobId}) => {
                   const appDate = new Date(date);
                 l.push({
                     jobName,
                     clientName,
                     status,
                     date:`${appDate.getDate()}/${appDate.getMonth()}/${appDate.getFullYear()}`,
-                    location
+                    location,
+                    jobId
                 })
               })
               setData( prevSate => {
                 return [...prevSate, ...l]})
+                setLoader(false);
               console.log(l)
        
             
@@ -74,17 +84,36 @@ const MyApplication = () => {
     return ( <div className={classes.myApp}>
         <Navbar></Navbar>
         <p>My <strong>Applications</strong></p>
-        <div  className={classes.app} >
             {
-                data.map(({jobName, clientName, location, status, date, street}) =>(
-                <ApplicationCard jobName={jobName}
-                clientName={clientName}
-                location={location}
-                status={status}
-                date={date}></ApplicationCard>  ))
-            }
+                
+                loader?(
+                  <div className={classes.loaderDIV}>
+                  <Loader
+                  className={classes.loader}
+                   type='TailSpin'
+                   color="#FF4F5B"
+                   height={80}
+                   width={80}
+                 />
+                 </div>
+              ):(
 
+               <div  className={classes.app} >
+                 {
+                                   data.map(({jobName, clientName, location, status, date, jobId}) =>(
+                                    <ApplicationCard jobName={jobName}
+                                    clientName={clientName}
+                                    location={location}
+                                    status={status}
+                                    date={date}
+                                    jobId={jobId}></ApplicationCard>  ))
+
+                 }
             </div>
+              )
+              
+
+            }
           
     </div> );
 }

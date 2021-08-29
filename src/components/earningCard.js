@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
  card:{
-     width:'28%',
+     width:'300px',
      boxShadow:'rgba(0, 0, 0, 0.24) 0px 3px 8px',
      padding:'1rem',
      margin:'1rem',
@@ -23,15 +23,18 @@ const useStyles = makeStyles((theme) => ({
      fontSize:'1.6rem',
      fontWeight:'bold',
      color:'#32CD32'
+ },
+ heading:{
+     margin:'.3rem 0'
  }
      
       }));
 
-const EarningCard = ({jobName, clientName, timings, salary}) => {
+const EarningCard = ({jobName, clientName, timings, salary, location}) => {
     const classes = useStyles();
     return ( <div className={classes.card}>
-        <p><strong>{jobName}</strong></p>
-        <p>{clientName}</p>
+        <h2 className={classes.heading}><strong>{jobName}</strong></h2>
+        <p>{clientName}, <strong>{location}</strong></p>
         <p>{timings}</p>
         <div className={classes.moneyDiv}>
             <div className={classes.money}>{salary} Rs</div>

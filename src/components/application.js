@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -11,8 +11,15 @@ import TextField from '@material-ui/core/TextField';
 import confirm from './../utils/confirm.svg';
 import submit from './../utils/submit.png';
 import axios from 'axios';
+import Loader from "react-loader-spinner";
 
 const useStyles = makeStyles((theme) => ({
+  loaderDIV:{
+    width:'100%'
+      },
+      loader:{
+        margin:'5rem auto'
+            },
   root: {
     width: '100%',
   },
@@ -66,6 +73,7 @@ done:{
     width:'50%',
     margin:'0 auto'
 }
+
 }));
 
 function getSteps() {
@@ -73,7 +81,7 @@ function getSteps() {
 }
 
 
-export default function Application({jobId,clientName,jobName,location}) {
+export default function Application({jobId,clientName,jobName,location, history}) {
   const classes = useStyles();
   const [name, setName]=useState("");
   const [address, setAddress] = useState("");
@@ -82,6 +90,14 @@ export default function Application({jobId,clientName,jobName,location}) {
   const [license, setLicense] = useState("");
   const [activeStep, setActiveStep] = React.useState(0);
   const [error, setError] = useState("");
+  const [loader, setLoader] =useState(true);
+
+  useEffect(()=>{
+if(!localStorage.getItem("authToken")){
+  history.push ="/auth";
+}
+
+  },[history])
 
   const steps = getSteps();
   function getStepContent(stepIndex) {
@@ -203,6 +219,7 @@ export default function Application({jobId,clientName,jobName,location}) {
   const handleSubmit =async()=>{
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     // e.preventDefault();
+    setLoader(true);
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -236,6 +253,9 @@ export default function Application({jobId,clientName,jobName,location}) {
         }, 5000);
       
     }
+    
+    setLoader(false);
+    
 
   }
   return (
@@ -249,10 +269,23 @@ export default function Application({jobId,clientName,jobName,location}) {
       </Stepper>
       <div>
         {activeStep === steps.length ?(
+                      loader?(
+                        <div  className={classes.form1}>
+                        <Loader
+                        className={classes.loader}
+                         type='TailSpin'
+                         color="#FF4F5B"
+                         height={80}
+                         width={80}
+                       />
+                       </div>
+                    ):
+                 (  
             <div className={classes.form1}>
              <img src={submit} className={classes.done} alt="submit"></img>
              <p>We <strong>recevied your application</strong>, our team will soon contact you for <strong>futher verification</strong></p>
                 </div>
+                 )
         ): (
           <div>
             <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>

@@ -70,10 +70,14 @@ const useStyles = makeStyles((theme) => ({
         borderRadius:'5pc',
         width:'65px',
         fontSize:'0.8rem'
-    }
+    },
+    link: {
+        textDecoration: 'none',
+        color: 'black'
+      },
   }));
 
-const ApplicationCard = ({jobName, clientName, location, status, date, street}) => {
+const ApplicationCard = ({jobName, clientName, location, status, date, street, jobId}) => {
     const classes = useStyles();
     
     
@@ -92,7 +96,7 @@ const ApplicationCard = ({jobName, clientName, location, status, date, street}) 
             <div className={classes.buttom}>
                 <div className={classes[`${status}`]}>{status}</div>
                 <Button className={classes.details} variant="contained">
-        Job details
+                <Link className={classes.link} to={`/findJobs/${jobId}`} >Job details</Link>
       </Button>
             </div>
         </Paper>

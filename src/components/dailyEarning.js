@@ -2,10 +2,15 @@ import React,{useState, useEffect} from 'react';
 import EarningCard from './earningCard';
 import { makeStyles } from '@material-ui/core/styles';
 import Navbar from './navbar';
-import wallet from './../utils/wallet.png'
+import wallet from './../utils/wallet.png';
+import Loader from "react-loader-spinner";
+import axios from 'axios';
 
 
 const useStyles = makeStyles((theme) => ({
+    loader:{
+        margin:'8rem auto'
+            },
   div:{
 
 textAlign:'center',
@@ -21,7 +26,8 @@ textAlign:'center',
       width:'65%',
       margin:'0 auto',
       display:'flex',
-      justifyContent:'center'
+      justifyContent:'center',
+      flexWrap:'wrap'
   },
   total:{
       width:'60%',
@@ -49,59 +55,95 @@ textAlign:'center',
 
 const DailyEarning = () => {
     const classes = useStyles();
-    const [jobs, setJobs]=useState([
-{
-    jobName:'Main driver Executive',
-    clientName:'flipkart',
-    timings:'10:00 AM - 5:00 PM',
-    salary:'750'
-},
-{
-    jobName:'Main driver Executive',
-    clientName:'Swiggy',
-    timings:'5:00 PM - 7:00 PM',
-    salary:'300'
-},
-{
-    jobName:'Main driver Executive',
-    clientName:'Zomato',
-    timings:'7:00 PM - 9:00 PM',
-    salary:'200'
-}
-    ]);
+    const [loader, setLoader]=useState(true)
+    const [jobs, setJobs]=useState([]);
     const [total, setTotal] =useState(0);
 
-    useEffect(()=>{
-let sum=0;
 
-jobs.forEach((job) => {
-    sum+= job.salary - '0';
-})
-setTotal(sum);
-    },[]);
+    useEffect(() => {
+        const fetchData = async () => {
+      
+        
+        
+      
+            try {
+        
+        //  console.log(Url)
+              const { data } = await axios.get(`https://pure-caverns-24063.herokuapp.com/api/apply/allApplications/${localStorage.getItem("userId")}`);
+              console.log(data);
+
+              let l =[];
+
+              data.AllApplication?.forEach(({jobName,clientName,status, date,location, jobId}) => {
+                  const appDate = new Date(date);
+
+                  if(status=== 'hired'){
+                    l.push({
+                        jobName,
+                        clientName,
+                        status,
+                        date:`${appDate.getDate()}/${appDate.getMonth()}/${appDate.getFullYear()}`,
+                        location,
+                        jobId
+                    })
+
+                  }
+
+              })
+              setJobs( prevSate => {
+                return [...prevSate, ...l]})
+                setLoader(false);
+              console.log(l)
+       
+            
+            } catch (error) {
+              console.log(error.response.data.error);
+            }
+          };
+          fetchData();
+        },[]);
 
     return ( <div className={classes.div}>
         <Navbar></Navbar>
-        <p>My <strong>daily earning</strong></p>
-        <div className={classes.total}>
+        <p><strong>Daily earning</strong> goals</p>
+        {
+            loader?(
+                <div className={classes.loaderDIV}>
+                <Loader
+                className={classes.loader}
+                 type='TailSpin'
+                 color="#FF4F5B"
+                 height={80}
+                 width={80}
+               />
+               </div>
+            ):(
+                <div>
+                          <div className={classes.total}>
             <img src ={wallet} alt="wallet"></img>
             <div className={classes.walletMoney}>
 
-            <p>{total}</p>
+            <p>1200</p>
             <strong>Total (Rs)</strong>
             </div>
         </div>
         <div className={classes.allCards}>
             {
-                jobs.map(({jobName, clientName, timings, salary})=>(
+                jobs.map(({jobName, clientName, salary, location})=>(
                     <EarningCard jobName={jobName}
                     clientName={clientName}
-                    timings={timings}
-                    salary={salary}></EarningCard>
+                    timings="2:00PM - 8:00PM"
+                    salary="400"
+                    location={location}></EarningCard>
                 ))
             }
     
         </div>
+
+                    </div>
+            )
+        }
+  
     </div> );
 }
  
