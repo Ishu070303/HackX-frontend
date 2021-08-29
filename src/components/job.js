@@ -248,9 +248,15 @@ const handleClose = () => {
             </Typography>
           </AccordionDetails>
         </Accordion>
-        <Button className={classes.apply} variant="contained" color="primary" onClick={handleOpen}>
-          Apply now
-        </Button>
+        {localStorage.getItem("authToken") ? (
+<Button className={classes.apply} variant="contained" color="primary" onClick={handleOpen}>
+        Apply now
+      </Button>
+):(
+<Button className={classes.apply} variant="contained" color="primary" disabled>
+        Apply now
+      </Button>
+)}
           </Grid>
         </Grid>
         <Footer/>
