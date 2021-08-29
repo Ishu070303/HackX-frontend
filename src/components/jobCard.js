@@ -114,9 +114,15 @@ console.log(props.JobId)
 <p>
     Earning : <strong>{props.salary} Rs/hour</strong>
 </p>
+{localStorage.getItem("authToken") ? (
 <Button className={classes.apply} variant="contained" color="primary" onClick={handleOpen}>
         Apply now
       </Button>
+):(
+<Button className={classes.apply} variant="contained" color="primary" disabled>
+        Apply now
+      </Button>
+)}
 <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
